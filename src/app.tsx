@@ -17,6 +17,7 @@ export function App() {
     }
 
     loadInitialImages();
+    window.scrollTo(0, 0);
   }, [])
 
   const loadImageList = async () => {
@@ -28,10 +29,10 @@ export function App() {
     <main>
       <h1 class="text-5xl font-bold text-center text-white p-5">PixivFlow</h1>
       <InfiniteScroll
-        pageStart={0}
         loadMore={loadImageList}
-        hasMore={true || false}
+        hasMore={true}
         initialLoad={false}
+        threshold={100000}
       >
         {initialLoading ? <Loading /> :
           imgs.map((data, i) => (
@@ -41,7 +42,7 @@ export function App() {
             />
           ))}
       </InfiniteScroll>
-      <Footer />
+      {!initialLoading && <Footer />}
     </main >
   )
 }
