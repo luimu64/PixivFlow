@@ -3,7 +3,13 @@
 @tailwind utilities;
 
 
+html,
 body {
     height: 100vh;
     background-color: black;
+    scrollbar-width: none;
+}
+
+::-webkit-scrollbar {
+    display: none;
 }
