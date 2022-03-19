@@ -19,7 +19,7 @@ const PreviewImage: FunctionComponent<IImageTileProps> = (props) => {
                 onClick={props.onClick}
                 onLoad={stopLoading}
                 src={props.url}
-                class={classNames("object-cover h-full w-full", props.loading && 'invisible !h-0')}
+                class={classNames("object-cover h-full w-full hover:scale-110 transition", props.loading && 'invisible !h-0')}
             />
             <div class={classNames("bg-gray-500 h-80 animate-pulse w-full", !props.loading && 'hidden')}></div>
         </>
@@ -63,7 +63,7 @@ export const ImageTile: FunctionComponent<IImageTileProps> = (props) => {
 
     return (
         <div key={props.key} class={classNames(
-            "mx-auto my-5 md:rounded overflow-hidden",
+            "mx-auto my-5 md:rounded overflow-hidden cursor-pointer",
             opened ? 'h-full w-full flex flex-col justify-center items-center' : 'h-80 md:w-2/3',
             loading && 'w-full h-80'
         )}>
