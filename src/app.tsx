@@ -32,7 +32,7 @@ export function App() {
         loadMore={loadImageList}
         hasMore={true}
         initialLoad={false}
-        threshold={100000}
+        threshold={10000}
       >
         {initialLoading ? <Loading /> :
           imgs.map((data, i) => (
