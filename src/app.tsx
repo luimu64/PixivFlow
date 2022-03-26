@@ -6,13 +6,17 @@ import InfiniteScroll from 'react-infinite-scroller';
 import { Footer } from './components/Footer';
 
 export function App() {
-  const [imgs, setImgs] = useState<string[]>([]);
+  const [columns, setColumns] = useState<string[][]>([]);
+  const [lastColumn, setLastColumn] = useState<number>(columns.length - 1);
   const [initialLoading, setInitialLoading] = useState<boolean>(true);
 
   useEffect(() => {
     const loadInitialImages = async () => {
-      const imgs = await PixivApi.getRandomImgs(10);
-      setImgs(imgs);
+      //creates array of arrays of column amount
+      let tempImgs: string[][] = Array(Math.ceil(window.innerWidth / 600)).fill(undefined).map(() => []);
+      const imgs = await PixivApi.getRandomImgs(12);
+      imgs.forEach((e, i) => tempImgs[i % tempImgs.length].push(e));
+      setColumns(tempImgs);
       setInitialLoading(false);
     }
 
@@ -22,7 +26,7 @@ export function App() {
 
   const loadImageList = async () => {
     const data = await PixivApi.getRandomImg() ?? [];
-    setImgs(imgs.concat(data))
+    //setImgs(imgs.concat(data))
   }
 
   return (
@@ -35,12 +39,18 @@ export function App() {
         threshold={10000}
       >
         {initialLoading ? <Loading /> :
-          imgs.map((data, i) => (
-            <ImageTile
-              key={i}
-              url={data}
-            />
-          ))}
+          <div class='flex justify-center gap-3 md:w-2/3 w-full mx-auto'>
+            {columns.map((c, i) => (
+              <div class='w-1/2'>
+                {c.map((data, i) => (
+                  <ImageTile
+                    key={i}
+                    url={data}
+                  />
+                ))}
+              </div>
+            ))}
+          </div>}
       </InfiniteScroll>
       {!initialLoading && <Footer />}
     </main >

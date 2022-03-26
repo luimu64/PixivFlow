@@ -64,7 +64,7 @@ export const ImageTile: FunctionComponent<IImageTileProps> = (props) => {
     return (
         <div key={props.key} class={classNames(
             "mx-auto my-5 md:rounded overflow-hidden cursor-pointer",
-            opened ? 'h-full w-full flex flex-col justify-center items-center' : 'h-80 md:w-2/3',
+            opened ? 'h-full w-full flex flex-col justify-center items-center' : '',
             loading && 'w-full h-80'
         )}>
             {opened ?
