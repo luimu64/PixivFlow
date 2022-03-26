@@ -32,16 +32,20 @@ const FullImage: FunctionComponent<IImageTileProps> = (props) => {
     return (
         <>
             <img
-                onClick={props.onClick}
                 onLoad={stopLoading}
                 src={props.url?.replace('&web=true', '')}
-                class={classNames("object-contain h-full w-full z-10", props.loading && 'invisible !h-0')}
+                class={classNames("h-5/6 object-contain z-50", props.loading && 'invisible !h-0')}
             />
+            <div
+                onClick={props.onClick}
+                class="absolute h-full w-screen opacity-70 right-0 left-0 bg-black z-40"
+            >
+            </div>
             <svg
                 width={40}
                 height={40}
                 fill='white'
-                class={classNames("animate-spin", !props.loading && 'hidden')}
+                class={classNames("animate-spin z-20", !props.loading && 'hidden')}
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 16 16"
             >
@@ -63,9 +67,9 @@ export const ImageTile: FunctionComponent<IImageTileProps> = (props) => {
 
     return (
         <div key={props.key} class={classNames(
-            "mx-auto my-5 md:rounded overflow-hidden cursor-pointer",
-            opened ? 'h-full w-full flex flex-col justify-center items-center' : '',
-            loading && 'w-full h-80'
+            "mx-auto md:rounded cursor-pointer w-full flex flex-col justify-center items-center",
+            opened ? 'fixed left-0 right-0 top-0 bottom-0' : 'overflow-hidden h-full my-5',
+            (loading && !opened) && 'h-80'
         )}>
             {opened ?
                 <FullImage
