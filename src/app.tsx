@@ -1,20 +1,20 @@
 import { ImageTile } from './components/ImageTile'
 import { Loading } from './components/Loading';
 import { PixivApi } from './services/PixivApi'
-import { useState, useEffect } from 'preact/hooks';
+import { useState, useEffect, useRef } from 'preact/hooks';
 import InfiniteScroll from 'react-infinite-scroller';
 import { Footer } from './components/Footer';
 
 export function App() {
   const [columns, setColumns] = useState<string[][]>([]);
-  const [lastColumn, setLastColumn] = useState<number>(columns.length - 1);
   const [initialLoading, setInitialLoading] = useState<boolean>(true);
+  const columnWrapper = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const loadInitialImages = async () => {
       //creates array of arrays of column amount
       let tempImgs: string[][] = Array(Math.ceil(window.innerWidth / 600)).fill(undefined).map(() => []);
-      const imgs = await PixivApi.getRandomImgs(12);
+      const imgs = await PixivApi.getRandomImgs(50);
       imgs.forEach((e, i) => tempImgs[i % tempImgs.length].push(e));
       setColumns(tempImgs);
       setInitialLoading(false);
@@ -24,9 +24,20 @@ export function App() {
     window.scrollTo(0, 0);
   }, [])
 
+  const getShortestColumn = () => {
+    const heights = Array.from((columnWrapper.current as HTMLElement).children).map(e => e.clientHeight);
+    const min = Math.min(...heights);
+    return heights.indexOf(min);
+  }
+
   const loadImageList = async () => {
-    const data = await PixivApi.getRandomImg() ?? [];
-    //setImgs(imgs.concat(data))
+    if (columnWrapper.current) {
+      const data = await PixivApi.getRandomImg() ?? [];
+      const shortest = getShortestColumn();
+      const tempColumn = [...columns];
+      tempColumn[shortest].push(data);
+      setColumns(tempColumn)
+    }
   }
 
   return (
@@ -39,9 +50,9 @@ export function App() {
         threshold={10000}
       >
         {initialLoading ? <Loading /> :
-          <div class='flex justify-center gap-3 md:w-2/3 w-full mx-auto'>
+          <div ref={columnWrapper} class='flex justify-center gap-3 md:w-2/3 w-full mx-auto'>
             {columns.map((c, i) => (
-              <div class='w-1/2'>
+              <div class='w-full h-min'>
                 {c.map((data, i) => (
                   <ImageTile
                     key={i}
