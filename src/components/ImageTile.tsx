@@ -15,11 +15,6 @@ export const ImageTile: FunctionComponent<IImageTileProps> = (props) => {
     const [opened, setOpened] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(true);
 
-    const changeOpen = () => {
-        setOpened(!opened);
-        setLoading(true);
-    }
-
     return (
         <div key={props.key} class={classNames(
             "mx-auto md:rounded cursor-pointer w-full flex flex-col justify-center items-center overflow-hidden h-full my-5",
