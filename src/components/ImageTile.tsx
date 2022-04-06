@@ -1,5 +1,5 @@
 import { FunctionComponent } from "preact";
-import { useState } from "preact/hooks";
+import { useState, useRef } from "preact/hooks";
 import classNames from 'classnames';
 import { ImageOverlay } from './ImageOverlay';
 
@@ -14,15 +14,18 @@ interface IImageTileProps {
 export const ImageTile: FunctionComponent<IImageTileProps> = (props) => {
     const [opened, setOpened] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(true);
+    const img = useRef<HTMLImageElement>(null);
 
     return (
-        <div key={props.key} class={classNames(
-            "mx-auto md:rounded cursor-pointer w-full flex flex-col justify-center items-center overflow-hidden h-full my-5",
-            loading && 'h-80'
-        )}>
+        <div
+            key={props.key}
+            class={classNames("mx-auto md:rounded cursor-pointer w-full flex flex-col justify-center items-center overflow-hidden h-full my-5", loading && 'h-80')}
+            ref={img}
+        >
             <img
                 onClick={() => setOpened(true)}
                 onLoad={() => setLoading(false)}
+                onError={() => img.current?.classList.add('hidden')}
                 src={props.url}
                 class={classNames("object-cover h-full w-full hover:scale-110 transition", props.loading && 'invisible !h-0')}
             />
