@@ -1,18 +1,19 @@
-import { useRef, useEffect } from "preact/hooks"
+import { useState, useEffect } from "preact/hooks"
 
 export const useImages = (getMoreImages?: boolean) => {
-    const images = useRef<string[]>([]);
+    const [images, setImages] = useState<string[]>([]);
 
+    const getImages = async (amount: number) => {
+        let templinks: string[] = Array(amount).fill('https://pximg.rainchan.win/img');
 
-    const getImages = async (iteration: number) => {
-        const res = await fetch('https://pximg.rainchan.win/img');
-        images.current = images.current.concat(res.url);
-        if (iteration > 0) getImages(--iteration);
+        const promises = await Promise.all(templinks.map(link => fetch(link).then(res => res.url)));
+
+        setImages([...images].concat(promises));
     }
 
     useEffect(() => {
         if (getMoreImages) getImages(10);
     }, [getMoreImages]);
 
-    return [images.current];
+    return [images];
 }

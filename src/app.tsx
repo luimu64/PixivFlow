@@ -1,22 +1,19 @@
 import { ImageTile } from './components/ImageTile'
 import { Loading } from './components/Loading';
 import { useImages } from './hooks/useImages';
+import { useColumns } from './hooks/useColumns';
 import { useState, useEffect, useRef } from 'preact/hooks';
 import InfiniteScroll from 'react-infinite-scroller';
 import { Footer } from './components/Footer';
 
 export function App() {
-  const [columns, setColumns] = useState<string[][]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const columnWrapper = useRef<HTMLDivElement>(null);
-  const [images] = useImages(loading);
+  const [columns] = useColumns(loading, columnWrapper);
 
   useEffect(() => {
-    let tempImgs: string[][] = Array(Math.ceil(window.innerWidth / 600)).fill(undefined).map(() => []);
-    images.forEach((e, i) => tempImgs[i % tempImgs.length].push(e));
-    setColumns(tempImgs);
-    setTimeout(() => setLoading(false), 1000);
-  }, [images])
+    if (loading) setTimeout(() => setLoading(false), 1000);
+  }, [loading])
 
   const startLoading = () => setLoading(true);
 
