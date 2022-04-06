@@ -1,9 +1,9 @@
 import { useState, useEffect } from "preact/hooks";
 import { useImages } from "./useImages";
 
-export const useColumns = (loading: boolean, columnWrapper: any) => {
+export const useColumns = (columnWrapper: any) => {
     const [columns, setColumns] = useState<string[][]>([]);
-    const [images] = useImages(loading);
+    const { getImages } = useImages();
 
     const getShortestColumn = () => {
         const heights = Array.from((columnWrapper.current as HTMLElement).children).map(e => e.clientHeight);
@@ -11,11 +11,26 @@ export const useColumns = (loading: boolean, columnWrapper: any) => {
         return heights.indexOf(min);
     }
 
-    useEffect(() => {
-        let tempImgs: string[][] = Array(Math.ceil(window.innerWidth / 600)).fill(undefined).map(() => []);
-        images.forEach((e, i) => tempImgs[i % tempImgs.length].push(e));
-        setColumns(tempImgs);
-    }, [images]);
+    const loadNewImage = async () => {
+        if (columnWrapper.current) {
+            const newImg = await getImages(1);
+            const shortest = getShortestColumn();
+            const tempColumn = [...columns];
+            tempColumn[shortest].push(newImg[0]);
+            setColumns(tempColumn)
+        }
+    }
 
-    return [columns];
+    useEffect(() => {
+        const getInitialData = async () => {
+            let tempImgs: string[][] = Array(Math.ceil(window.innerWidth / 600)).fill(undefined).map(() => []);
+            let images = await getImages(20);
+            images.forEach((e, i) => tempImgs[i % tempImgs.length].push(e));
+            setColumns(tempImgs);
+        }
+
+        getInitialData();
+    }, []);
+
+    return { columns, loadNewImage };
 }
